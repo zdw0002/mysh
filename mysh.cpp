@@ -239,6 +239,8 @@ void parse(string line)
     
     if ((argv.size() > 0) && (redirect || append)) {
         filename = argv.back();
+        argv.pop_back();
+        argv.pop_back();
     }
     
     if (argv[0] == "chpr")
@@ -253,9 +255,23 @@ void parse(string line)
     {
         output("Shell Version : " + version);
     }
+    else if (argv[0] == "pwd")
+    {
+        char cwd[255];
+        getcwd(cwd, 255);
+        string s(cwd);
+        output(s);
+    }
     else if (argv[0] == "cd")
     {
-        output(getenv("HOME"));
+        if (argv.size() > 1)
+        {
+            chdir(argv[1].c_str());            
+        }
+        else
+        {
+            chdir(getenv("HOME"));
+        }
     }
     else
     {
@@ -265,7 +281,6 @@ void parse(string line)
         }
     }
 }
-
 
 int main()
 {
