@@ -1,4 +1,4 @@
-// Students   : Zachary Wilson, Richard McDaniel
+// Students   : Zachary Wilson, Richard McDaniel, Alex White
 // Assignment : CS390 Spring 2015 Project
 // Date       : 3/28/15
 
@@ -18,9 +18,8 @@ void error();
 
 string command = "";
 string prompt = "mysh> ";
-string version  = "mysh version 1.0 Copyright 2014 by Zachary Wilson, Richard McDaniel";
+string version  = "mysh version 1.0 Copyright 2014 by Zachary Wilson, Richard McDaniel, Alex White";
 string filename = "";
-bool redirect = false;
 bool append = false;
 
 //COMMANDS AVAILABLE
@@ -135,7 +134,6 @@ It also sets the global string filename and gobal bools redirect and append.
 */
 void parse(string line)
 {
-    bool escaping = false;
     bool quoting = false;
     bool redirecting = false;
     bool appending = false;
@@ -144,99 +142,59 @@ void parse(string line)
     string word = "";
     
     filename = "";
-    redirect = false;
     append = false;
+    line += " ";
     
     for (string::size_type i = 0; i < line.size(); ++i) {
         switch (line[i])
         {
             case ' ':
-            if (quoting)
-            {
-                word += line[i];
-            }
-            else
-            {
-                if ((word != "") && (word != " ")) {
-                    if (redirecting || appending)
-                    {
-                        redirect = redirecting;
-                        append = appending;
-                        filename = word;
-                        redirecting = false;
-                        appending = false;
-                    }
-                    else
-                    {
-                        argv.push_back(word);
-                    }
+                if (quoting)
+                {
+                    word += line[i];
                 }
-                word = "";
-            }
-            break;
+                else
+                {
+                    if ((word != "") && (word != " ")) {
+                        if (redirecting || appending)
+                        {
+                            append = appending;
+                            filename = word;
+                            redirecting = false;
+                            appending = false;
+                        }
+                        else
+                        {
+                            argv.push_back(word);
+                        }
+                    }
+                    word = "";
+                }
+                break;
             
             case '>':
-            if (escaping)
-            {
-                escaping = false;
-                word += line[i];
-            }
-            else if (redirecting)
-            {
-                redirecting = false;
-                appending = true;
-                word = "";
-            }
-            else
-            {
-                redirecting = true;
-                if ((word != "") && (word != " ")) {
-                    argv.push_back(word);
+                if (redirecting)
+                {
+                    redirecting = false;
+                    appending = true;
+                    word = "";
                 }
-                word = "";
-            }
-            break;
-            
-            case '\\':
-            if (escaping)
-            {
-                escaping = false;
-                word += line[i];
-            }
-            else
-            {
-                escaping = true;
-            }
-            break;
+                else
+                {
+                    redirecting = true;
+                    if ((word != "") && (word != " ")) {
+                        argv.push_back(word);
+                    }
+                    word = "";
+                }
+                break;
             
             case '"':
-            if (escaping)
-            {
-                escaping = false;
-                word += line[i];
-            }
-            else
-            {
                 quoting = !quoting;
-            }
-            break;
+                break;
             
             default:
-            word += line[i];
-        }
-    }
-    
-    if (word != "")
-    {
-        if (redirecting || appending)
-        {
-            redirect = redirecting;
-            append = appending;
-            filename = word;
-        }
-        else
-        {
-            argv.push_back(word);
+                word += line[i];
         }
     }
     
