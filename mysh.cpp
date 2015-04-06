@@ -66,7 +66,7 @@ int execute(string command)
 {
     int pipes[3] = {0};
     
-    char* argv[256];
+    char* argv[256];    //TODO
     // argv[0] = "ls";
     // argv[1] = NULL;
     
@@ -128,6 +128,11 @@ int execute(string command)
     return pid;
 }
 
+/*
+This function parses a command line and created an argv array.
+It also sets the global string filename and gobal bools redirect and append.
+@returns nothing
+*/
 void parse(string line)
 {
     bool escaping = false;
@@ -237,10 +242,8 @@ void parse(string line)
     
     if (argv[0] == "chpr")
     {
-        cout << "Please enter new prompt: " ;
-        getline(cin, prompt);
-        
-        cout << "Prompt changed to : [" << prompt << "] sucessfully" << endl;
+        prompt = argv[1];
+        output("Prompt changed to : [" + prompt + "] sucessfully");
     }
     else if (argv[0] == "ver")
     {
@@ -310,7 +313,6 @@ bool checkSize(string command)
     }
     else
     {
-        error();
         return false;
     }
 }
