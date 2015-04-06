@@ -153,15 +153,18 @@ void parse(string line)
             else
             {
                 if ((word != "") && (word != " ")) {
-                    if (redirecting) {
-                        argv.push_back(">");
+                    if (redirecting || appending)
+                    {
+                        redirect = redirecting;
+                        append = appending;
+                        filename = word;
                         redirecting = false;
-                    }
-                    else if (appending) {
-                        argv.push_back(">>");
                         appending = false;
                     }
-                    argv.push_back(word);
+                    else
+                    {
+                        argv.push_back(word);
+                    }
                 }
                 word = "";
             }
@@ -220,32 +223,20 @@ void parse(string line)
     
     if (word != "")
     {
-        if (redirecting) {
-            argv.push_back(">");
-            redirecting = false;
+        if (redirecting || appending)
+        {
+            redirect = redirecting;
+            append = appending;
+            filename = word;
         }
-        else if (appending) {
-            argv.push_back(">>");
-            appending = false;
+        else
+        {
+            argv.push_back(word);
         }
-        argv.push_back(word);
-    }
-    
-    if (argv.size() >= 3)
-    {
-        redirect = argv.end()[-2] == ">";
-        append = argv.end()[-2] == ">>";
-    }
-    
-    if ((argv.size() > 0) && (redirect || append)) {
-        filename = argv.back();
-        argv.pop_back();
-        argv.pop_back();
     }
     
     if (argv[0] == "chpr")
     {
-        
         cout << "Please enter new prompt: " ;
         getline(cin, prompt);
         
